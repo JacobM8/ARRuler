@@ -55,16 +55,18 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // optional binding to keep track of the touch
         if let touchLocation = touches.first?.location(in: sceneView) {
-            // location in 3D world on our screen
-            let hitTestResults = sceneView.hitTest(touchLocation, types: .featurePoint)
-            
-            if let hitResult = hitTestResults.first {
-                addDot(at: hitResult)
+            if let query = sceneView.raycastQuery(from: touchLocation, allowing: .estimatedPlane, alignment: .any) {
+                let raycastResults = sceneView.session.raycast(query)
+                
+                if let hitResult = raycastResults.first {
+                    addDot(at: hitResult)
+                }
             }
         }
     }
+
     
-    func addDot(at hitResult : ARHitTestResult) {
+    func addDot(at hitResult : ARRaycastResult) {
         let dotGeometry = SCNSphere(radius: 0.005)
         let material = SCNMaterial()
         
